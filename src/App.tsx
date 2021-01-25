@@ -42,22 +42,35 @@ const App = () => {
   };
 
   const handleAddToCart = (clickedItem: CartItemType) => {
-    setCartItems(prev =>{
+    setCartItems((prev) => {
       //1. is the item already in cart?
-      const isItemInCart = prev.find(item=>item.id === clickedItem.id)
+      const isItemInCart = prev.find((item) => item.id === clickedItem.id);
 
-      if (isItemInCart){
-        return prev.map(item=>(
+      if (isItemInCart) {
+        return prev.map((item) =>
           //if item already in cart increase amount else just return item
-          item.id ===  clickedItem.id ?{...item,amount:item.amount+1} :item
-        ))
+          item.id === clickedItem.id
+            ? { ...item, amount: item.amount + 1 }
+            : item
+        );
       }
       //first time item is added
-      return [...prev,{...clickedItem,amount:1}]
-    })
+      return [...prev, { ...clickedItem, amount: 1 }];
+    });
   };
 
-  const handleRemoveFromCart = () => null;
+  const handleRemoveFromCart = (id: number) => {
+    setCartItems(prev=>
+      prev.reduce((ack,item)=>{
+        if(item.id=== id ){
+          if(item.amount === 1) return ack;
+          return [...ack,{...item,amount:item.amount -1 }]
+        }else{
+          return [...ack,item];
+        }
+      },[] as CartItemType[])
+      );
+  };
 
   if (isLoading) return <LinearProgress />;
   if (error) return <div>Something Went Wrong</div>;
